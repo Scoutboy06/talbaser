@@ -1,5 +1,5 @@
 const DIGITS =
-	"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".split("");
+	"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
 
 function assertEq(left: unknown, right: unknown) {
 	if (left !== right) throw new Error(`${left} ≠ ${right}`);
@@ -59,7 +59,32 @@ export function parseDigit(digit: string): number {
 	return value;
 }
 
-export function printNumberInBase(num: number, base: number): void {}
+export function getNumberInBase(num: number, base: number): string {
+	let int = Math.floor(num);
+	let frac = num - int;
+
+	// Integer part
+	const digits: string[] = [];
+	while (int >= 1) {
+		const lsd = int % base;
+		digits.unshift(DIGITS[lsd]);
+		int -= lsd;
+		int /= base;
+	}
+
+	// Fractional part
+	const decimals: string[] = [];
+	while (frac !== 0) {
+		frac *= base;
+		const val = Math.floor(frac);
+		frac -= val;
+		decimals.push(DIGITS[val]);
+	}
+
+	const numberPart = digits.join("") || "0";
+	const decimalPart = decimals.length ? `.${decimals.join("")}` : "";
+	return numberPart + decimalPart;
+}
 
 function testParsing() {
 	assertEq(parseNumberFromBase("0", 2), 0);
@@ -123,4 +148,39 @@ function testParsing() {
 	);
 }
 
+function testPrinting() {
+	assertEq(getNumberInBase(0, 2), "0");
+	assertEq(getNumberInBase(1, 2), "1");
+	assertEq(getNumberInBase(2, 2), "10");
+	assertEq(getNumberInBase(4, 2), "100");
+	assertEq(getNumberInBase(8, 2), "1000");
+	assertEq(getNumberInBase(255, 2), "11111111");
+	assertEq(getNumberInBase(256, 2), "100000000");
+	assertEq(getNumberInBase(255.5, 2), "11111111.1");
+
+	assertEq(getNumberInBase(0, 10), "0");
+	assertEq(getNumberInBase(15, 10), "15");
+	assertEq(getNumberInBase(16, 10), "16");
+	assertEq(getNumberInBase(255, 10), "255");
+	assertEq(getNumberInBase(255.5, 10), "255.5");
+	assertEq(getNumberInBase(256, 10), "256");
+	assertEq(getNumberInBase(256.5, 10), "256.5");
+
+	assertEq(getNumberInBase(0, 16), "0");
+	assertEq(getNumberInBase(15, 16), "f");
+	assertEq(getNumberInBase(16, 16), "10");
+	assertEq(getNumberInBase(255, 16), "ff");
+	assertEq(getNumberInBase(255.5, 16), "ff.8");
+	assertEq(getNumberInBase(256, 16), "100");
+
+	assertEq(getNumberInBase(0, 64), "0");
+	assertEq(getNumberInBase(15, 64), "f");
+	assertEq(getNumberInBase(16, 64), "g");
+	assertEq(getNumberInBase(255, 64), "3/");
+	assertEq(getNumberInBase(255.5, 64), "3/.w");
+	assertEq(getNumberInBase(256, 64), "40");
+	assertEq(getNumberInBase(256.5, 64), "40.w");
+}
+
 testParsing();
+testPrinting();
