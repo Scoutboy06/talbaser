@@ -61,7 +61,7 @@ export function parseDigit(digit: string): number {
 
 export function printNumberInBase(num: number, base: number): void {}
 
-function main() {
+function testParsing() {
 	assertEq(parseNumberFromBase("0", 2), 0);
 	assertEq(parseNumberFromBase("1", 2), 1);
 	assertEq(parseNumberFromBase("10", 2), 2);
@@ -101,14 +101,26 @@ function main() {
 	assertEq(parseNumberFromBase("000", 16), 0);
 	assertEq(parseNumberFromBase("ff", 16), 255);
 
-	console.log(parseNumberFromBase("010", 64));
-	console.log(parseNumberFromBase("a", 64));
-	console.log(parseNumberFromBase("z", 64));
-	console.log(parseNumberFromBase("A", 64));
-	console.log(parseNumberFromBase("Z", 64));
-	console.log(parseNumberFromBase("+", 64));
-	console.log(parseNumberFromBase("/", 64));
-	console.log(parseNumberFromBase("09azAZ+/", 64));
+	assertEq(parseNumberFromBase("010", 64), 64);
+	assertEq(parseNumberFromBase("a", 64), 10);
+	assertEq(parseNumberFromBase("z", 64), 35);
+	assertEq(parseNumberFromBase("A", 64), 36);
+	assertEq(parseNumberFromBase("Z", 64), 61);
+	assertEq(parseNumberFromBase("+", 64), 62);
+	assertEq(parseNumberFromBase("/", 64), 63);
+	assertEq(
+		parseNumberFromBase("90azAZ+/,5H", 64),
+		9 * 64 ** 7 + // 9
+			0 * 64 ** 6 + // 0
+			10 * 64 ** 5 + // a
+			35 * 64 ** 4 + // z
+			36 * 64 ** 3 + // A
+			61 * 64 ** 2 + // Z
+			62 * 64 ** 1 + // +
+			63 * 64 ** 0 + // /
+			5 * 64 ** -1 + // 5
+			43 * 64 ** -2, // H
+	);
 }
 
-main();
+testParsing();
