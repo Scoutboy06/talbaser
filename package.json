@@ -1,0 +1,17 @@
+{
+  "name": "talbaser",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "bun tests.ts",
+    "start": "bun index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.13.11"
+  }
+}
