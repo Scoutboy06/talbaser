@@ -33,17 +33,30 @@ export function parseNumberFromBase(num: string, base: number): number {
 	validateNumber(num, base);
 
 	let result = 0;
-	const decimalPos = num.search(/[,\.]/);
-	let exponent = decimalPos === -1 ? num.length - 1 : decimalPos - 1;
-
-	for (let i = 0; i < num.length; i++) {
+	let i = 0;
+	while (i < num.length) {
 		const digit = num[i];
 
-		if (digit === "," || digit === ".") continue;
+		if (digit === "." || digit === ",") {
+			i++;
+			break;
+		}
 
 		const value = parseDigit(digit);
+		result *= base;
+		result += value;
+
+		i++;
+	}
+
+	let exponent = -1;
+	while (i < num.length) {
+		const digit = num[i];
+		const value = parseDigit(digit);
 		result += base ** exponent * value;
+
 		exponent--;
+		i++;
 	}
 
 	return result;
